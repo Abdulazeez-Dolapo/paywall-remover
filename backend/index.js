@@ -29,8 +29,6 @@ const getLink = async url => {
 	return href
 }
 
-// getLink()
-
 const normalizePort = val => {
 	const port = parseInt(val, 10)
 
@@ -44,6 +42,7 @@ const normalizePort = val => {
 }
 
 import express from "express"
+import cors from "cors"
 
 const PORT = normalizePort(8000)
 
@@ -51,6 +50,7 @@ const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use(cors())
 
 app.get("/", (req, res) => {
 	res.status(200).json({ status: "success", message: "Welcome" })
