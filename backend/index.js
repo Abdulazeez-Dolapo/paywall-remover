@@ -1,4 +1,30 @@
+import express from "express"
 import puppeteer from "puppeteer"
+import cors from "cors"
+
+const app = express()
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(cors())
+
+const normalizePort = val => {
+	const port = parseInt(val, 10)
+
+	if (isNaN(port)) {
+		return val
+	}
+	if (port >= 0) {
+		return port
+	}
+	return false
+}
+
+const PORT = normalizePort(8000)
+
+app.listen(PORT, () => {
+	console.log(`Server is running on port ${PORT}`)
+})
 
 const getLink = async url => {
 	const browser = await puppeteer.launch({
@@ -28,29 +54,6 @@ const getLink = async url => {
 	await browser.close()
 	return href
 }
-
-const normalizePort = val => {
-	const port = parseInt(val, 10)
-
-	if (isNaN(port)) {
-		return val
-	}
-	if (port >= 0) {
-		return port
-	}
-	return false
-}
-
-import express from "express"
-import cors from "cors"
-
-const PORT = normalizePort(8000)
-
-const app = express()
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(cors())
 
 app.get("/", (req, res) => {
 	res.status(200).json({ status: "success", message: "Welcome" })
@@ -84,10 +87,6 @@ app.post("/remove-paywall", async (req, res) => {
 			.status(500)
 			.json({ status: "error", message: "A problem occurred" })
 	}
-})
-
-app.listen(PORT, () => {
-	console.log(`Server is running on port ${PORT}`)
 })
 
 const invalidPathHandler = (req, res, next) => {
