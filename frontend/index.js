@@ -1,22 +1,39 @@
 async function getLink(url) {
-	try {
-		const BASE_URL = "http://localhost:8000"
-		const rawResponse = await fetch(`${BASE_URL}/remove-paywall`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ url }),
-		})
+	const BASE_URL = "http://localhost:8000"
+	const rawResponse = await fetch(`${BASE_URL}/remove-paywall`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ url }),
+	})
 
-		if (!rawResponse.ok) return { error: true, link: null }
-
-		const { data } = await rawResponse.json()
-		return { error: false, link: data.link }
-	} catch (err) {
-		console.log(err)
-		return { error: true, link: null }
+	console.log(rawResponse)
+	if (!rawResponse.ok) {
+		return {
+			errorCode: rawResponse.status,
+			link: null,
+		}
 	}
+
+	const { data } = await rawResponse.json()
+	return { errorCode: null, link: data.link }
+}
+
+const getErrorMessage = statusCode => {
+	let errorMessage = "An error occurred. Please try again"
+
+	switch (statusCode) {
+		case 404:
+			errorMessage =
+				"We're unable to remove paywall from this page. Please try another page."
+			break
+
+		default:
+			break
+	}
+
+	return errorMessage
 }
 
 const handleBtnClick = async () => {
@@ -24,12 +41,14 @@ const handleBtnClick = async () => {
 	const url =
 		"https://theathletic.com/5059090/2023/11/14/pochettino-chelsea-tottenham-city-fans/"
 	console.log({ url })
-	const { error, link } = await getLink(url)
+	const { errorCode, link } = await getLink(url)
 
 	const paragraph = document.getElementById("error-message")
 
-	if (error) {
-		paragraph.innerText = "An error occurred. Please try again"
+	if (errorCode) {
+		const errorMessage = getErrorMessage(errorCode)
+		paragraph.innerText = errorMessage
+
 		return
 	}
 
