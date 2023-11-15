@@ -8,7 +8,6 @@ async function getLink(url) {
 		body: JSON.stringify({ url }),
 	})
 
-	console.log(rawResponse)
 	if (!rawResponse.ok) {
 		return {
 			errorCode: rawResponse.status,
@@ -36,7 +35,12 @@ const getErrorMessage = statusCode => {
 	return errorMessage
 }
 
+const btn = document.getElementById("btn")
+
 const handleBtnClick = async () => {
+	btn.innerText = "Loading..."
+	btn.disabled = true
+
 	// const url = window.location.href?.split("?")?.[0]
 	const url =
 		"https://theathletic.com/5059090/2023/11/14/pochettino-chelsea-tottenham-city-fans/"
@@ -49,13 +53,18 @@ const handleBtnClick = async () => {
 		const errorMessage = getErrorMessage(errorCode)
 		paragraph.innerText = errorMessage
 
+		btn.innerText = "Remove paywall"
+		btn.disabled = false
+
 		return
 	}
 
 	// Remove error text if one exists from a previous button click
 	paragraph.innerText = ""
+	btn.innerText = "Remove paywall"
+	btn.disabled = false
+
 	window.open(link, "_blank")
 }
 
-const btn = document.getElementById("btn")
 btn.addEventListener("click", handleBtnClick)
