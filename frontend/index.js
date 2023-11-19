@@ -35,34 +35,58 @@ const getErrorMessage = statusCode => {
 	return errorMessage
 }
 
+const getCurrentTabUrl = async () => {
+	try {
+		const queryOptions = { active: true, currentWindow: true }
+		const [tab] = await chrome?.tabs?.query(queryOptions)
+
+		return tab?.url
+	} catch (error) {
+		console.log(error)
+		return ""
+	}
+}
+
 const btn = document.getElementById("btn")
+
+const resetButtonState = () => {
+	btn.innerText = "Remove paywall"
+	btn.disabled = false
+}
+
+const updatePageText = message => {
+	const paragraph = document.getElementById("error-message")
+	paragraph.innerText = message
+}
 
 const handleBtnClick = async () => {
 	btn.innerText = "Loading..."
 	btn.disabled = true
 
-	// const url = window.location.href?.split("?")?.[0]
-	const url =
-		"https://theathletic.com/5059090/2023/11/14/pochettino-chelsea-tottenham-city-fans/"
+	const url = await getCurrentTabUrl()
 	console.log({ url })
-	const { errorCode, link } = await getLink(url)
 
-	const paragraph = document.getElementById("error-message")
+	if (!url) {
+		const errorMessage = "Couldn't fetch current page URL. Please try again."
+		updatePageText(errorMessage)
+		resetButtonState()
+
+		return
+	}
+
+	const { errorCode, link } = await getLink(url)
 
 	if (errorCode) {
 		const errorMessage = getErrorMessage(errorCode)
-		paragraph.innerText = errorMessage
-
-		btn.innerText = "Remove paywall"
-		btn.disabled = false
+		updatePageText(errorMessage)
+		resetButtonState()
 
 		return
 	}
 
 	// Remove error text if one exists from a previous button click
-	paragraph.innerText = ""
-	btn.innerText = "Remove paywall"
-	btn.disabled = false
+	updatePageText("")
+	resetButtonState()
 
 	window.open(link, "_blank")
 }
