@@ -1,0 +1,12 @@
+{
+	"name": "Byepass",
+	"version": "1.0.0",
+	"description": "Bypass a website's paywall",
+	"manifest_version": 3,
+	"author": "Abdulazeez Abdulrafiu",
+	"action": {
+		"default_popup": "index.html",
+		"default_title": "Byepass"
+	},
+	"permissions": ["activeTab"]
+}
