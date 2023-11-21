@@ -20,7 +20,7 @@ const normalizePort = val => {
 	return false
 }
 
-const PORT = normalizePort(8000)
+const PORT = normalizePort(process.env.PORT || 8000)
 
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`)
