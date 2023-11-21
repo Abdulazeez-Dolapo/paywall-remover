@@ -30,42 +30,47 @@ app.listen(PORT, () => {
 })
 
 const getLink = async url => {
-	const browser = await puppeteer.launch({
-		args: [
-			"--disable-setuid-sandbox",
-			"--no-sandbox",
-			"--single-process",
-			"--no-zygote",
-		],
-		executablePath:
-			process.env.NODE_ENV === "production"
-				? puppeteer.PUPPETEER_EXECUTABLE_PATH
-				: puppeteer.executablePath(),
-		headless: false,
-		defaultViewport: null,
-	})
-
-	const page = await browser.newPage()
-
-	await page.goto(`https://archive.is/${url}`, {
-		waitUntil: "domcontentloaded",
-	})
-
-	let href
-
 	try {
-		href = await page.evaluate(() => {
-			const link = document.querySelector("div#row0 > div.TEXT-BLOCK > a")
-
-			if (link) return link.getAttribute("href")
+		const browser = await puppeteer.launch({
+			args: [
+				"--disable-setuid-sandbox",
+				"--no-sandbox",
+				"--single-process",
+				"--no-zygote",
+			],
+			executablePath:
+				process.env.NODE_ENV === "production"
+					? puppeteer.PUPPETEER_EXECUTABLE_PATH
+					: puppeteer.executablePath(),
+			headless: false,
+			defaultViewport: null,
 		})
+
+		const page = await browser.newPage()
+
+		await page.goto(`https://archive.is/${url}`, {
+			waitUntil: "domcontentloaded",
+		})
+
+		let href
+
+		try {
+			href = await page.evaluate(() => {
+				const link = document.querySelector("div#row0 > div.TEXT-BLOCK > a")
+
+				if (link) return link.getAttribute("href")
+			})
+		} catch (error) {
+			console.error("Error occurred while extracting the href:", error)
+			throw error
+		}
+
+		await browser.close()
+		return href
 	} catch (error) {
-		console.error("Error occurred while extracting the href:", error)
+		console.error("Some Error occurred:", error)
 		throw error
 	}
-
-	await browser.close()
-	return href
 }
 
 app.get("/", (req, res) => {
