@@ -40,7 +40,7 @@ const getLink = async url => {
 			],
 			executablePath:
 				process.env.NODE_ENV === "production"
-					? puppeteer.PUPPETEER_EXECUTABLE_PATH
+					? process.env.PUPPETEER_EXECUTABLE_PATH
 					: puppeteer.executablePath(),
 			headless: false,
 			defaultViewport: null,
