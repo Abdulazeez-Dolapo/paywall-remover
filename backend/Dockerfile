@@ -1,5 +1,5 @@
-# FROM ghcr.io/puppeteer/puppeteer:21.5.1
-FROM node:14-slim
+FROM ghcr.io/puppeteer/puppeteer:21.5.1
+# FROM node:14-slim
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
 # Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer
