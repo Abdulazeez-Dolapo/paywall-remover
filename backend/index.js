@@ -1,6 +1,9 @@
 import express from "express"
 import puppeteer from "puppeteer"
 import cors from "cors"
+import dotenv from "dotenv"
+
+dotenv.config()
 
 const app = express()
 
@@ -28,6 +31,16 @@ app.listen(PORT, () => {
 
 const getLink = async url => {
 	const browser = await puppeteer.launch({
+		args: [
+			"--disable-setuid-sandbox",
+			"--no-sandbox",
+			"--single-process",
+			"--no-zygote",
+		],
+		executablePath:
+			process.env.NODE_ENV === "production"
+				? puppeteer.PUPPETEER_EXECUTABLE_PATH
+				: puppeteer.executablePath(),
 		headless: false,
 		defaultViewport: null,
 	})
