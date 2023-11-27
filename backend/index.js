@@ -35,7 +35,7 @@ const getLink = async url => {
 			args: [
 				"--disable-setuid-sandbox",
 				"--no-sandbox",
-				"--single-process",
+				// "--single-process",
 				"--no-zygote",
 			],
 			executablePath:
