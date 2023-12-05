@@ -34,8 +34,8 @@ const getLink = async url => {
 		args: [
 			"--disable-setuid-sandbox",
 			"--no-sandbox",
-			// "--single-process",
-			// "--no-zygote",
+			"--single-process",
+			"--no-zygote",
 		],
 		executablePath:
 			process.env.NODE_ENV === "production"
