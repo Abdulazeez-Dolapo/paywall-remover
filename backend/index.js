@@ -30,27 +30,31 @@ app.listen(PORT, () => {
 })
 
 const getLink = async url => {
+	const browser = await puppeteer.launch({
+		args: [
+			"--disable-setuid-sandbox",
+			"--no-sandbox",
+			"--single-process",
+			"--no-zygote",
+		],
+		executablePath:
+			process.env.NODE_ENV === "production"
+				? process.env.PUPPETEER_EXECUTABLE_PATH
+				: puppeteer.executablePath(),
+		headless: "new",
+	})
+
 	try {
-		const browser = await puppeteer.launch({
-			args: [
-				"--disable-setuid-sandbox",
-				"--no-sandbox",
-				// "--single-process",
-				"--no-zygote",
-			],
-			executablePath:
-				process.env.NODE_ENV === "production"
-					? process.env.PUPPETEER_EXECUTABLE_PATH
-					: puppeteer.executablePath(),
-			headless: false,
-			defaultViewport: null,
-		})
-
 		const page = await browser.newPage()
+		const userAgent =
+			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
+		await page.setUserAgent(userAgent)
 
-		await page.goto(`https://archive.is/${url}`, {
-			waitUntil: "domcontentloaded",
-		})
+		await page.goto(`https://archive.is/${url}`)
+		await page.setViewport({ width: 1080, height: 1024 })
+
+		const searchResultSelector = "a"
+		await page.waitForSelector(searchResultSelector)
 
 		let href
 
@@ -65,11 +69,12 @@ const getLink = async url => {
 			throw error
 		}
 
-		await browser.close()
 		return href
 	} catch (error) {
 		console.error("Some Error occurred:", error)
 		throw error
+	} finally {
+		await browser.close()
 	}
 }
 
