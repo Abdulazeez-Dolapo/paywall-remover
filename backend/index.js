@@ -34,8 +34,8 @@ const getLink = async url => {
 		args: [
 			"--disable-setuid-sandbox",
 			"--no-sandbox",
-			"--single-process",
-			"--no-zygote",
+			// "--single-process",
+			// "--no-zygote",
 		],
 		executablePath:
 			process.env.NODE_ENV === "production"
@@ -69,7 +69,6 @@ const getLink = async url => {
 			throw error
 		}
 
-		page.close()
 		return href
 	} catch (error) {
 		console.error("Some Error occurred:", error)
