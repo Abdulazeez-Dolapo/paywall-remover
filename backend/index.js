@@ -53,14 +53,14 @@ const getLink = async url => {
 		await page.goto(`https://archive.is/${url}`)
 		await page.setViewport({ width: 1080, height: 1024 })
 
-		const searchResultSelector = "a"
-		await page.waitForSelector(searchResultSelector)
+		await page.waitForSelector("a")
 
 		let href
 
 		try {
 			href = await page.evaluate(() => {
-				const link = document.querySelector("div#row0 > div.TEXT-BLOCK > a")
+				const linkSelector = "div#row0 > div.TEXT-BLOCK > a"
+				const link = document.querySelector(linkSelector)
 
 				if (link) return link.getAttribute("href")
 			})
@@ -69,6 +69,7 @@ const getLink = async url => {
 			throw error
 		}
 
+		page.close()
 		return href
 	} catch (error) {
 		console.error("Some Error occurred:", error)
