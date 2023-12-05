@@ -35,6 +35,7 @@ const getLink = async url => {
 			"--disable-setuid-sandbox",
 			"--no-sandbox",
 			"--single-process",
+			"--disable-dev-shm-usage",
 			"--no-zygote",
 		],
 		executablePath:
@@ -74,6 +75,7 @@ const getLink = async url => {
 		console.error("Some Error occurred:", error)
 		throw error
 	} finally {
+		await page.close()
 		await browser.close()
 	}
 }
